@@ -7197,7 +7197,7 @@ Report
     const data = await fetchProfileData(urls[i]);
     if (!data) continue;
 
-    const avatarEl = targets[i].querySelector('.playerAvatarAutoSizeInner img');
+    const avatarEl = targets[i].querySelector('.market_listing_owner_avatar img');
     const nameEl = targets[i].querySelector('.market_listing_whoactedwith_name_block');
 
     if (avatarEl) avatarEl.src = data.avatar;
