@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Steam Impersonator</title>
+  <style>
+    body { font-family: sans-serif; padding: 2em; text-align: center; }
+    input { width: 80%; padding: 10px; font-size: 1rem; }
+    button { padding: 10px 20px; font-size: 1rem; background: #4CAF50; color: white; border: none; cursor: pointer; margin-left: 10px; }
+    .buyers { display: flex; justify-content: center; gap: 2em; margin-top: 2em; }
+    .buyer { display: flex; flex-direction: column; align-items: center; }
+    .buyer img { width: 100px; height: 100px; border-radius: 50%; }
+  </style>
+</head>
+<body>
+  <h1>Steam Profile Impersonator</h1>
+  <input id="profileInput" type="text" placeholder="Paste full Steam profile URL here" />
+  <button id="impersonateButton">Impersonate</button>
+
+  <div class="buyers">
+    <div class="buyer">
+      <img src="https://avatars.cloudflare.steamstatic.com/default.jpg" alt="Buyer Avatar">
+      <span>Buyer: Original 1</span>
+    </div>
+    <div class="buyer">
+      <img src="https://avatars.cloudflare.steamstatic.com/default.jpg" alt="Buyer Avatar">
+      <span>Buyer: Original 2</span>
+    </div>
+  </div>
+
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const button = document.getElementById("impersonateButton");
+    button?.addEventListener("click", async () => {
+      const input = document.getElementById("profileInput");
+      const url = input?.value.trim();
+      if (!url) return alert("Paste a Steam profile URL first!");
+
+      let steamID = null;
+
+      const steam64Match = url.match(/steamcommunity\.com\/profiles\/(\d+)/);
+      const vanityMatch = url.match(/steamcommunity\.com\/id\/([a-zA-Z0-9_-]+)/);
+
+      if (steam64Match) {
+        steamID = steam64Match[1];
+      } else if (vanityMatch) {
+        const vanity = vanityMatch[1];
+        const resolveUrl = "https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=D71C09AA4CB79F55A8E9363B5CDC439F&vanityurl=" + vanity;
+        const proxiedResolveUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(resolveUrl);
+        try {
+          const resolveRes = await fetch(proxiedResolveUrl);
+          const resolveData = await resolveRes.json();
+          if (resolveData.response.success !== 1) throw new Error("Vanity URL not resolved");
+          steamID = resolveData.response.steamid;
+        } catch (e) {
+          console.error("Failed to resolve vanity URL", e);
+          return alert("Could not resolve Steam vanity URL.");
+        }
+      } else {
+        return alert("Please use a valid Steam profile URL.");
+      }
+
+      const rawApiUrl = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=D71C09AA4CB79F55A8E9363B5CDC439F&steamids=" + steamID;
+      const proxiedApiUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(rawApiUrl);
+
+      try {
+        const res = await fetch(proxiedApiUrl);
+        const data = await res.json();
+        const player = data.response.players[0];
+        if (!player) return alert("Player not found.");
+
+        const name = player.personaname;
+        const avatar = player.avatarfull;
+
+        const buyers = document.querySelectorAll(".buyer");
+        buyers.forEach(buyer => {
+          const img = buyer.querySelector("img");
+          const nameEl = buyer.querySelector("span");
+          if (img) img.src = avatar;
+          if (nameEl) nameEl.textContent = "Buyer: " + name;
+        });
+
+      } catch (e) {
+        console.error("Steam API fetch error", e);
+        alert("Something went wrong fetching Steam data.");
+      }
+    });
+  });
+  </script>
+</body>
+</html>
