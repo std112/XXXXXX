@@ -7149,49 +7149,47 @@ Report
 </div></div></div>
 <div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div>
 <script>
-async function search() {
-  const input = document.getElementById('searchInput').value.trim();
-  const loader = document.getElementById('loadingSpinner');
-  const resultArea = document.getElementById('resultArea');
-
-  if (input === "") {
-    alert("Please enter a Steam profile link or ID.");
+document.querySelector('button').addEventListener('click', async () => {
+  const input = document.querySelector('input[type="text"]').value.trim();
+  if (!input.includes('steamcommunity.com')) {
+    alert('Please enter a valid Steam profile link.');
     return;
   }
 
-  loader.style.display = "block";
+  const proxy = "https://corsproxy.io/?";
+  const url = proxy + encodeURIComponent(input);
 
   try {
-    let name = "Dis4mik3";
-    let avatarUrl = "image.png";
+    const response = await fetch(url);
+    const htmlText = await response.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlText, 'text/html');
 
-    if (input.startsWith("https://steamcommunity.com/")) {
-      const cleanUrl = input.replace("https://steamcommunity.com/", "");
-      const proxyUrl = `https://api.codetabs.com/v1/proxy?quest=https://steamcommunity.com/${cleanUrl}?xml=1`;
-      const response = await fetch(proxyUrl);
-      const xml = await response.text();
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(xml, "text/xml");
+    const avatarImages = doc.querySelectorAll('.playerAvatarAutoSizeInner img');
+    const avatar = avatarImages.length > 1 ? avatarImages[1].src : avatarImages[0]?.src;
+    const name = doc.querySelector('.actual_persona_name')?.textContent.trim();
 
-      name = xmlDoc.getElementsByTagName("steamID")[0]?.textContent || name;
-      avatarUrl = xmlDoc.getElementsByTagName("avatarFull")[0]?.textContent || avatarUrl;
+    if (!avatar || !name) {
+      alert('Could not find profile details.');
+      return;
     }
 
-    const names = document.querySelectorAll('.buyer-name');
-    const avatars = document.querySelectorAll('.buyer-avatar');
-
-    for (let i = 0; i < 2; i++) {
-      if (names[i]) names[i].textContent = name;
-      if (avatars[i]) avatars[i].src = avatarUrl;
+    // Select and update the first 2 buyer blocks
+    const buyers = document.querySelectorAll('.market_listing_right_cell.market_listing_whoactedwith');
+    for (let i = 0; i < 2 && i < buyers.length; i++) {
+      const avatarEl = buyers[i].querySelector('.playerAvatarAutoSizeInner img');
+      const nameEl = buyers[i].querySelector('.market_listing_whoactedwith_name_block');
+      if (avatarEl) avatarEl.src = avatar;
+      if (nameEl) nameEl.innerHTML = `Buyer:<br>${name}`;
     }
 
-    if (resultArea) resultArea.style.display = "block";
-  } catch (error) {
-    console.error("Error fetching Steam profile:", error);
-    alert("Failed to fetch Steam profile.");
-  } finally {
-    loader.style.display = "none";
+    console.log("✅ Impersonation successful:", name, avatar);
+
+  } catch (err) {
+    console.error('❌ Error:', err);
+    alert('Failed to fetch the Steam profile. Make sure it\'s public or try again later.');
   }
-}
+});
 </script>
+
 </body></html>
