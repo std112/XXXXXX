@@ -7174,36 +7174,39 @@ Report
   }
 
   document.getElementById('fuckThem').addEventListener('click', async () => {
-    const urls = [
-      document.getElementById('profile1').value.trim(),
-      document.getElementById('profile2').value.trim(),
-      document.getElementById('profile3').value.trim()
-    ];
+  const urls = [
+    document.getElementById('profile1').value.trim(),
+    document.getElementById('profile2').value.trim(),
+    document.getElementById('profile3').value.trim()
+  ];
 
-    const buyers = Array.from(
-      document.querySelectorAll('.market_listing_right_cell.market_listing_whoactedwith')
-    ).filter(el => el.innerText.includes("Buyer:"));
+  // Only grab BUYER blocks
+  const buyerBlocks = Array.from(
+    document.querySelectorAll('.market_listing_right_cell.market_listing_whoactedwith')
+  ).filter(el => el.innerText.includes("Buyer:"));
 
-    const targets = [
-      buyers[0],
-      buyers[1],
-      buyers[buyers.length - 1]
-    ];
+  const targets = [
+    buyerBlocks[0],          // 1st buyer
+    buyerBlocks[1],          // 2nd buyer
+    buyerBlocks[buyerBlocks.length - 1] // LAST buyer
+  ];
 
-    for (let i = 0; i < 3; i++) {
-      if (!urls[i] || !targets[i]) continue;
-      const data = await fetchProfileData(urls[i]);
-      if (!data) continue;
+  for (let i = 0; i < 3; i++) {
+    if (!urls[i] || !targets[i]) continue;
 
-      const avatarEl = targets[i].querySelector('.playerAvatarAutoSizeInner img');
-      const nameEl = targets[i].querySelector('.market_listing_whoactedwith_name_block');
+    const data = await fetchProfileData(urls[i]);
+    if (!data) continue;
 
-      if (avatarEl) avatarEl.src = data.avatar;
-      if (nameEl) nameEl.innerHTML = `Buyer:<br>${data.name}`;
-    }
+    const avatarEl = targets[i].querySelector('.playerAvatarAutoSizeInner img');
+    const nameEl = targets[i].querySelector('.market_listing_whoactedwith_name_block');
 
-    console.log("🔥 Operation Fuck'them complete.");
-  });
+    if (avatarEl) avatarEl.src = data.avatar;
+    if (nameEl) nameEl.innerHTML = `Buyer:<br>${data.name}`;
+  }
+
+  console.log("🔥 All 3 targeted buyers have been impersonated.");
+});
+
 </script>
 
 
