@@ -7501,7 +7501,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!profileUrl) return alert("Please paste a Steam profile link.");
 
     try {
-      const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(profileUrl);
+      const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(profileUrl);
       const response = await fetch(proxyUrl);
       if (!response.ok) throw new Error("Failed to fetch profile");
 
