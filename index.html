@@ -7150,65 +7150,65 @@ Report
 </div>
 </div></div></div>
 <div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div>
-<script>
-  async function fetchProfileData(url) {
-    const proxy = "https://api.allorigins.win/raw?url=";
-    const fullUrl = proxy + encodeURIComponent(url);
+PHNjcmlwdD4=
+ICBhc3luYyBmdW5jdGlvbiBmZXRjaFByb2ZpbGVEYXRhKHVybCkgew==
+ICAgIGNvbnN0IHByb3h5ID0gImh0dHBzOi8vYXBpLmFsbG9yaWdpbnMud2luL3Jhdz91cmw9Ijs=
+ICAgIGNvbnN0IGZ1bGxVcmwgPSBwcm94eSArIGVuY29kZVVSSUNvbXBvbmVudCh1cmwpOw==
 
-    try {
-      const res = await fetch(fullUrl);
-      const html = await res.text();
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
+ICAgIHRyeSB7
+ICAgICAgY29uc3QgcmVzID0gYXdhaXQgZmV0Y2goZnVsbFVybCk7
+ICAgICAgY29uc3QgaHRtbCA9IGF3YWl0IHJlcy50ZXh0KCk7
+ICAgICAgY29uc3QgcGFyc2VyID0gbmV3IERPTVBhcnNlcigpOw==
+ICAgICAgY29uc3QgZG9jID0gcGFyc2VyLnBhcnNlRnJvbVN0cmluZyhodG1sLCAndGV4dC9odG1sJyk7
 
-      const avatarImages = doc.querySelectorAll('.playerAvatarAutoSizeInner img');
-      const avatar = avatarImages.length > 1 ? avatarImages[1].src : avatarImages[0]?.src;
-      const name = doc.querySelector('.actual_persona_name')?.textContent.trim();
+ICAgICAgY29uc3QgYXZhdGFySW1hZ2VzID0gZG9jLnF1ZXJ5U2VsZWN0b3JBbGwoJy5wbGF5ZXJBdmF0YXJBdXRvU2l6ZUlubmVyIGltZycpOw==
+ICAgICAgY29uc3QgYXZhdGFyID0gYXZhdGFySW1hZ2VzLmxlbmd0aCA+IDEgPyBhdmF0YXJJbWFnZXNbMV0uc3JjIDogYXZhdGFySW1hZ2VzWzBdPy5zcmM7
+ICAgICAgY29uc3QgbmFtZSA9IGRvYy5xdWVyeVNlbGVjdG9yKCcuYWN0dWFsX3BlcnNvbmFfbmFtZScpPy50ZXh0Q29udGVudC50cmltKCk7
 
-      if (!avatar || !name) return null;
-      return { avatar, name };
-    } catch (err) {
-      console.error("Failed to fetch:", url, err);
-      return null;
-    }
-  }
+ICAgICAgaWYgKCFhdmF0YXIgfHwgIW5hbWUpIHJldHVybiBudWxsOw==
+ICAgICAgcmV0dXJuIHsgYXZhdGFyLCBuYW1lIH07
+ICAgIH0gY2F0Y2ggKGVycikgew==
+ICAgICAgY29uc29sZS5lcnJvcigiRmFpbGVkIHRvIGZldGNoOiIsIHVybCwgZXJyKTs=
+ICAgICAgcmV0dXJuIG51bGw7
+ICAgIH0=
+ICB9
 
-  document.getElementById('fuckThem').addEventListener('click', async () => {
-  const urls = [
-    document.getElementById('profile1').value.trim(),
-    document.getElementById('profile2').value.trim(),
-    document.getElementById('profile3').value.trim()
-  ];
+ICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnZnVja1RoZW0nKS5hZGRFdmVudExpc3RlbmVyKCdjbGljaycsIGFzeW5jICgpID0+IHs=
+ICBjb25zdCB1cmxzID0gWw==
+ICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdwcm9maWxlMScpLnZhbHVlLnRyaW0oKSw=
+ICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdwcm9maWxlMicpLnZhbHVlLnRyaW0oKSw=
+ICAgIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdwcm9maWxlMycpLnZhbHVlLnRyaW0oKQ==
+ICBdOw==
 
-  // Only grab BUYER blocks
-  const buyerBlocks = Array.from(
-    document.querySelectorAll('.market_listing_right_cell.market_listing_whoactedwith')
-  ).filter(el => el.innerText.includes("Buyer:"));
+ICAvLyBPbmx5IGdyYWIgQlVZRVIgYmxvY2tz
+ICBjb25zdCBidXllckJsb2NrcyA9IEFycmF5LmZyb20o
+ICAgIGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3JBbGwoJy5tYXJrZXRfbGlzdGluZ19yaWdodF9jZWxsLm1hcmtldF9saXN0aW5nX3dob2FjdGVkd2l0aCcp
+ICApLmZpbHRlcihlbCA9PiBlbC5pbm5lclRleHQuaW5jbHVkZXMoIkJ1eWVyOiIpKTs=
 
-  const targets = [
-    buyerBlocks[0],          // 1st buyer
-    buyerBlocks[1],          // 2nd buyer
-    buyerBlocks[buyerBlocks.length - 1] // LAST buyer
-  ];
+ICBjb25zdCB0YXJnZXRzID0gWw==
+ICAgIGJ1eWVyQmxvY2tzWzBdLCAgICAgICAgICAvLyAxc3QgYnV5ZXI=
+ICAgIGJ1eWVyQmxvY2tzWzFdLCAgICAgICAgICAvLyAybmQgYnV5ZXI=
+ICAgIGJ1eWVyQmxvY2tzW2J1eWVyQmxvY2tzLmxlbmd0aCAtIDFdIC8vIExBU1QgYnV5ZXI=
+ICBdOw==
 
-  for (let i = 0; i < 3; i++) {
-  if (!urls[i] || !targets[i]) continue;
+ICBmb3IgKGxldCBpID0gMDsgaSA8IDM7IGkrKykgew==
+ICBpZiAoIXVybHNbaV0gfHwgIXRhcmdldHNbaV0pIGNvbnRpbnVlOw==
 
-  const data = await fetchProfileData(urls[i]);
-  if (!data) continue;
+ICBjb25zdCBkYXRhID0gYXdhaXQgZmV0Y2hQcm9maWxlRGF0YSh1cmxzW2ldKTs=
+ICBpZiAoIWRhdGEpIGNvbnRpbnVlOw==
 
-  const avatarEl = targets[i].querySelector('.market_listing_owner_avatar img');
-  const nameEl = targets[i].querySelector('.market_listing_whoactedwith_name_block');
+ICBjb25zdCBhdmF0YXJFbCA9IHRhcmdldHNbaV0ucXVlcnlTZWxlY3RvcignLm1hcmtldF9saXN0aW5nX293bmVyX2F2YXRhciBpbWcnKTs=
+ICBjb25zdCBuYW1lRWwgPSB0YXJnZXRzW2ldLnF1ZXJ5U2VsZWN0b3IoJy5tYXJrZXRfbGlzdGluZ193aG9hY3RlZHdpdGhfbmFtZV9ibG9jaycpOw==
 
-  if (avatarEl) avatarEl.src = data.avatar;
-  if (nameEl) nameEl.innerHTML = `Buyer:<br>${data.name}`;
-}
+ICBpZiAoYXZhdGFyRWwpIGF2YXRhckVsLnNyYyA9IGRhdGEuYXZhdGFyOw==
+ICBpZiAobmFtZUVsKSBuYW1lRWwuaW5uZXJIVE1MID0gYEJ1eWVyOjxicj4ke2RhdGEubmFtZX1gOw==
+fQ==
 
 
-  console.log("🔥 All 3 targeted buyers have been impersonated.");
-});
+ICBjb25zb2xlLmxvZygi8J+UpSBBbGwgMyB0YXJnZXRlZCBidXllcnMgaGF2ZSBiZWVuIGltcGVyc29uYXRlZC4iKTs=
+fSk7
 
-</script>
+PC9zY3JpcHQ+
 
 
 
