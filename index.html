@@ -7493,25 +7493,36 @@ BindHelpTooltip( $('[data-help-tooltip]') );
 </div>
 </div>
 </div></div></div>
-<div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><script>
+<div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div>
+<script>
 document.addEventListener("DOMContentLoaded", () => {
   const button = document.querySelector("button");
   button?.addEventListener("click", async () => {
-    const profileUrl = document.getElementById("profileInput")?.value.trim();
-    if (!profileUrl) return alert("Please paste a Steam profile link.");
+    const input = document.getElementById("profileInput");
+    if (!input) return alert("Input field not found.");
+
+    const profileUrl = input.value.trim();
+    if (!profileUrl.startsWith("https://steamcommunity.com")) {
+      return alert("Please enter a valid Steam profile URL.");
+    }
 
     try {
       const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(profileUrl);
       const response = await fetch(proxyUrl);
-      if (!response.ok) throw new Error("Failed to fetch profile");
-
       const html = await response.text();
-      const doc = new DOMParser().parseFromString(html, "text/html");
 
-      const avatar = doc.querySelector(".playerAvatarAutoSizeInner img")?.src;
-      const name = doc.querySelector(".actual_persona_name")?.textContent.trim();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, "text/html");
 
-      if (!avatar || !name) return alert("Profile data not found. Check visibility.");
+      const avatarDiv = doc.getElementsByClassName("playerAvatarAutoSizeInner")[0];
+      const avatarImg = avatarDiv?.getElementsByTagName("img")[0]?.getAttribute("src");
+
+      const nameElement = doc.getElementsByClassName("actual_persona_name")[0];
+      const steamName = nameElement?.textContent.trim();
+
+      if (!avatarImg || !steamName) {
+        return alert("Could not find avatar or name. Is the profile public?");
+      }
 
       const buyers = Array.from(document.querySelectorAll("div:has(img[src*='avatars'])"))
         .filter(el => el.textContent.includes("Buyer"))
@@ -7519,16 +7530,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
       buyers.forEach(buyer => {
         const img = buyer.querySelector("img");
-        if (img) img.src = avatar;
+        if (img) img.setAttribute("src", avatarImg);
 
         const nameTag = buyer.querySelector("div, span, a");
-        if (nameTag) nameTag.textContent = "Buyer: " + name;
+        if (nameTag) nameTag.textContent = "Buyer: " + steamName;
       });
 
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      console.error(err);
       alert("Something went wrong.");
     }
   });
 });
-</script></body></html>
+</script>
+</body></html>
