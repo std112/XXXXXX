@@ -7170,29 +7170,32 @@ document.querySelector('button').addEventListener('click', async () => {
     const name = doc.querySelector('.actual_persona_name')?.textContent.trim();
 
     if (!avatar || !name) {
-      alert('Could not extract avatar or name. Ensure the profile is public.');
+      alert('Could not find profile details.');
       return;
     }
 
-    // Select first 2 buyer blocks
-    const buyers = document.querySelectorAll('.market_listing_right_cell.market_listing_whoactedwith');
+    // Get all buyer rows (that contain "Buyer:" text)
+    const buyerBlocks = Array.from(document.querySelectorAll('.market_listing_right_cell.market_listing_whoactedwith'))
+      .filter(el => el.innerText.includes("Buyer:"))
+      .slice(0, 2); // Only first two buyers
 
-    for (let i = 0; i < 2 && i < buyers.length; i++) {
-      const avatarTag = buyers[i].querySelector('.playerAvatarAutoSizeInner img');
-      const nameBlock = buyers[i].querySelector('.market_listing_whoactedwith_name_block');
+    buyerBlocks.forEach(buyer => {
+      const avatarTag = buyer.querySelector('.playerAvatarAutoSizeInner img');
+      const nameBlock = buyer.querySelector('.market_listing_whoactedwith_name_block');
 
       if (avatarTag) avatarTag.src = avatar;
       if (nameBlock) nameBlock.innerHTML = `Buyer:<br>${name}`;
-    }
+    });
 
-    console.log("✅ Impersonation applied to first two buyers.");
+    console.log("✅ Updated avatars and names for 2 buyers");
 
-  } catch (error) {
-    console.error('Fetch failed:', error);
-    alert('Failed to fetch or parse profile. Try a different URL.');
+  } catch (err) {
+    console.error("❌ Fetch failed:", err);
+    alert("Failed to fetch Steam profile. Check if it's public.");
   }
 });
 </script>
+
 
 
 </body></html>
