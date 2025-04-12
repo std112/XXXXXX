@@ -7497,43 +7497,43 @@ BindHelpTooltip( $('[data-help-tooltip]') );
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const button = document.getElementById("impersonateButton");
-  button?.addEventListener("click", async () => {
+  if (!button) return;
+
+  button.addEventListener("click", async () => {
     const input = document.getElementById("profileInput");
     const url = input?.value.trim();
-    if (!url) return alert("Paste a Steam profile URL first!");
+    if (!url) return alert("Please paste a Steam profile URL.");
 
     let steamID = null;
 
-    const steam64Match = url.match(/steamcommunity\.com\/profiles\/(\d+)/);
-    const vanityMatch = url.match(/steamcommunity\.com\/id\/([a-zA-Z0-9_-]+)/);
-
-    if (steam64Match) {
-      steamID = steam64Match[1];
-    } else if (vanityMatch) {
-      const vanity = vanityMatch[1];
-      const resolveUrl = "https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=D71C09AA4CB79F55A8E9363B5CDC439F&vanityurl=" + vanity;
-      const proxiedResolveUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(resolveUrl);
-      try {
-        const resolveRes = await fetch(proxiedResolveUrl);
-        const resolveData = await resolveRes.json();
-        if (resolveData.response.success !== 1) throw new Error("Vanity URL not resolved");
-        steamID = resolveData.response.steamid;
-      } catch (e) {
-        console.error("Failed to resolve vanity URL", e);
-        return alert("Could not resolve Steam vanity URL.");
-      }
-    } else {
-      return alert("Please use a valid Steam profile URL.");
-    }
-
-    const rawApiUrl = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=D71C09AA4CB79F55A8E9363B5CDC439F&steamids=" + steamID;
-    const proxiedApiUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(rawApiUrl);
-
     try {
-      const res = await fetch(proxiedApiUrl);
-      const data = await res.json();
-      const player = data.response.players[0];
-      if (!player) return alert("Player not found.");
+      const isSteam64 = url.match(/steamcommunity\.com\/profiles\/(\d+)/);
+      const isVanity = url.match(/steamcommunity\.com\/id\/([a-zA-Z0-9_-]+)/);
+
+      if (isSteam64) {
+        steamID = isSteam64[1];
+      } else if (isVanity) {
+        const vanityName = isVanity[1];
+        const resolveUrl = "https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=D71C09AA4CB79F55A8E9363B5CDC439F&vanityurl=" + vanityName;
+        const proxyResolve = "https://api.allorigins.win/raw?url=" + encodeURIComponent(resolveUrl);
+
+        const resolveResponse = await fetch(proxyResolve);
+        const resolveData = await resolveResponse.json();
+        if (resolveData.response.success !== 1) {
+          throw new Error("Could not resolve vanity URL.");
+        }
+        steamID = resolveData.response.steamid;
+      } else {
+        return alert("URL format not supported. Use /profiles/ or /id/");
+      }
+
+      const profileUrl = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=D71C09AA4CB79F55A8E9363B5CDC439F&steamids=" + steamID;
+      const proxyProfileUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(profileUrl);
+      const profileResponse = await fetch(proxyProfileUrl);
+      const profileData = await profileResponse.json();
+      const player = profileData.response.players[0];
+
+      if (!player) return alert("Steam user not found or data is unavailable.");
 
       const name = player.personaname;
       const avatar = player.avatarfull;
@@ -7544,14 +7544,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
       buyers.forEach(buyer => {
         const img = buyer.querySelector("img");
-        if (img) img.src = avatar;
-
         const nameEl = buyer.querySelector("div, span, a");
+        if (img) img.src = avatar;
         if (nameEl) nameEl.textContent = "Buyer: " + name;
       });
 
-    } catch (e) {
-      console.error("Steam API fetch error", e);
+    } catch (err) {
+      console.error("Steam impersonation error:", err);
       alert("Something went wrong fetching Steam data.");
     }
   });
