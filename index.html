@@ -7192,17 +7192,18 @@ Report
   ];
 
   for (let i = 0; i < 3; i++) {
-    if (!urls[i] || !targets[i]) continue;
+  if (!urls[i] || !targets[i]) continue;
 
-    const data = await fetchProfileData(urls[i]);
-    if (!data) continue;
+  const data = await fetchProfileData(urls[i]);
+  if (!data) continue;
 
-    const avatarEl = targets[i].querySelector('.market_listing_owner_avatar img');
-    const nameEl = targets[i].querySelector('.market_listing_whoactedwith_name_block');
+  const avatarEl = targets[i].querySelector('.market_listing_owner_avatar img');
+  const nameEl = targets[i].querySelector('.market_listing_whoactedwith_name_block');
 
-    if (avatarEl) avatarEl.src = data.avatar;
-    if (nameEl) nameEl.innerHTML = `Buyer:<br>${data.name}`;
-  }
+  if (avatarEl) avatarEl.src = data.avatar;
+  if (nameEl) nameEl.innerHTML = `Buyer:<br>${data.name}`;
+}
+
 
   console.log("🔥 All 3 targeted buyers have been impersonated.");
 });
