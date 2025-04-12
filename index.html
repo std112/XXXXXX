@@ -7499,30 +7499,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const button = document.querySelector("button");
   button?.addEventListener("click", async () => {
     const input = document.getElementById("profileInput");
-    if (!input) return alert("Input field not found.");
+    const url = input?.value.trim();
+    if (!url) return alert("Paste a Steam profile URL first!");
 
-    const profileUrl = input.value.trim();
-    if (!profileUrl.startsWith("https://steamcommunity.com")) {
-      return alert("Please enter a valid Steam profile URL.");
-    }
+    const steam64Match = url.match(/steamcommunity\.com\/profiles\/(\d+)/);
+    if (!steam64Match) return alert("Please use a full Steam64 profile URL (not vanity URL).");
+
+    const steamID = steam64Match[1];
+    const apiUrl = "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=D71C09AA4CB79F55A8E9363B5CDC439F&steamids=" + steamID;
 
     try {
-      const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(profileUrl);
-      const response = await fetch(proxyUrl);
-      const html = await response.text();
+      const res = await fetch(apiUrl);
+      const data = await res.json();
+      const player = data.response.players[0];
+      if (!player) return alert("Player not found.");
 
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, "text/html");
-
-      const avatarDiv = doc.getElementsByClassName("playerAvatarAutoSizeInner")[0];
-      const avatarImg = avatarDiv?.getElementsByTagName("img")[0]?.getAttribute("src");
-
-      const nameElement = doc.getElementsByClassName("actual_persona_name")[0];
-      const steamName = nameElement?.textContent.trim();
-
-      if (!avatarImg || !steamName) {
-        return alert("Could not find avatar or name. Is the profile public?");
-      }
+      const name = player.personaname;
+      const avatar = player.avatarfull;
 
       const buyers = Array.from(document.querySelectorAll("div:has(img[src*='avatars'])"))
         .filter(el => el.textContent.includes("Buyer"))
@@ -7530,15 +7523,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
       buyers.forEach(buyer => {
         const img = buyer.querySelector("img");
-        if (img) img.setAttribute("src", avatarImg);
+        if (img) img.src = avatar;
 
-        const nameTag = buyer.querySelector("div, span, a");
-        if (nameTag) nameTag.textContent = "Buyer: " + steamName;
+        const nameEl = buyer.querySelector("div, span, a");
+        if (nameEl) nameEl.textContent = "Buyer: " + name;
       });
 
-    } catch (err) {
-      console.error(err);
-      alert("Something went wrong.");
+    } catch (e) {
+      console.error(e);
+      alert("Something went wrong fetching Steam data.");
     }
   });
 });
