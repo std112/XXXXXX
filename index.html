@@ -7152,46 +7152,19 @@ Report
 <div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div><div class="miniprofile_hover" style="display: none;"><div class="shadow_ul"></div><div class="shadow_top"></div><div class="shadow_ur"></div><div class="shadow_left"></div><div class="shadow_right"></div><div class="shadow_bl"></div><div class="shadow_bottom"></div><div class="shadow_br"></div><div class="miniprofile_hover_inner shadow_content"></div></div>
 <script>
 (async () => {
-  const steamApiKey = "D71C09AA4CB79F55A8E9363B5CDC439F";
+  const API_URL = 'https://your-render-url.onrender.com/api/steamProfile'; // <- Replace with your Render backend URL
 
-  async function resolveVanityUrl(input) {
-    const vanityUrlPattern = /^[a-zA-Z0-9_-]+$/;
-    // If input is 17-digit SteamID, return it directly
-    if (/^\d{17}$/.test(input)) return input;
-
-    // If it matches a vanity URL pattern, resolve it
-    if (vanityUrlPattern.test(input)) {
-      try {
-        const res = await fetch(`https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key=${steamApiKey}&vanityurl=${input}`);
-        const data = await res.json();
-        return data.response.success === 1 ? data.response.steamid : null;
-      } catch (e) {
-        console.error("Vanity URL resolution failed:", e);
-        return null;
-      }
-    }
-
-    return null; // Invalid input
-  }
-
-  async function getPlayerInfo(input) {
-    const steamId = await resolveVanityUrl(input);
-    if (!steamId) {
-      console.warn(`Invalid or unresolved input: ${input}`);
-      return null;
-    }
-
+  async function fetchProfile(input) {
     try {
-      const url = `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${steamApiKey}&steamids=${steamId}`;
-      const res = await fetch(url);
-      const data = await res.json();
-      const player = data.response.players?.[0];
-      return player ? {
-        name: player.personaname,
-        avatar: player.avatarfull
-      } : null;
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ input })
+      });
+      if (!res.ok) return null;
+      return await res.json();
     } catch (e) {
-      console.error("Failed to fetch player info:", e);
+      console.error("API fetch error:", e);
       return null;
     }
   }
@@ -7210,7 +7183,7 @@ Report
 
     for (let i = 0; i < 3; i++) {
       if (!inputs[i] || !targets[i]) continue;
-      const data = await getPlayerInfo(inputs[i]);
+      const data = await fetchProfile(inputs[i]);
       if (!data) continue;
       const img = targets[i].querySelector('.market_listing_owner_avatar img');
       const label = targets[i].querySelector('.market_listing_whoactedwith_name_block');
@@ -7218,10 +7191,11 @@ Report
       if (label) label.innerHTML = `Buyer:<br>${data.name}`;
     }
 
-    console.log("🎯 Targets updated using Steam Web API.");
+    console.log("🔥 Targets updated via API.");
   });
 })();
 </script>
+
 
 
 
